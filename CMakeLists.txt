@@ -11,9 +11,9 @@ if(NOT DEFINED STATIC_LIB_PATH)
     message(FATAL_ERROR "STATIC_LIB_PATH not defined!")
 endif()
 include_directories(
-        static-libs/include/curl
-        static-libs/include/openssl
-        static-libs/include/json)
+        jni/static-libs/include/curl
+        jni/static-libs/include/openssl
+        jni/static-libs/include/json)
 
 #add_library( # Sets the name of the library.
 #        lib_json
