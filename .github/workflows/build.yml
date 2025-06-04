@@ -1,0 +1,64 @@
+name: Android Cross-Compile
+
+on: [push, pull_request]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        abi: [arm64-v8a, armeabi-v7a]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up NDK
+      uses: android-actions/setup-android-ndk@v2
+      with:
+        ndk-version: '25c'
+
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build
+
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        
+        # 设置NDK路径
+        echo "NDK_HOME=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
+        
+        # 根据ABI选择工具链
+        if [ "${{ matrix.abi }}" = "arm64-v8a" ]; then
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=../cmake/arm64-v8a-toolchain.cmake \
+            -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_NDK=$ANDROID_NDK_ROOT \
+            -DSTATIC_LIB_PATH=../jni/static-libs/arm64-v8a
+        else
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=../cmake/armeabi-v7a-toolchain.cmake \
+            -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_NDK=$ANDROID_NDK_ROOT \
+            -DSTATIC_LIB_PATH=../jni/static-libs/armeabi-v7a
+        fi
+
+    - name: Build project
+      run: |
+        cd build
+        cmake --build . --target native-lib -- -j $(nproc)
+
+    - name: Collect artifacts
+      run: |
+        mkdir -p artifacts/${{ matrix.abi }}
+        cp build/libnative-lib.so artifacts/${{ matrix.abi }}
+        cp -r jni/include artifacts/
+        cp -r jni/static-libs artifacts/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-libs
+        path: artifacts
