@@ -11,18 +11,9 @@ if(NOT DEFINED STATIC_LIB_PATH)
     message(FATAL_ERROR "STATIC_LIB_PATH not defined!")
 endif()
 include_directories(
-        jni/static-libs/include/curl
-        jni/static-libs/include/openssl
-        jni/static-libs/include/json)
-
-#add_library( # Sets the name of the library.
-#        lib_json
-#
-#        # Sets the library as a shared library.
-#        SHARED
-#
-#        # Provides a relative path to your source file(s).
-#        lib_json/json_reader.cpp lib_json/json_tool.h lib_json/json_value.cpp lib_json/json_valueiterator.inl lib_json/json_writer.cpp)
+         ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
+         ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
+         ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include)
 
 add_library(z STATIC IMPORTED)
 set_target_properties(z PROPERTIES
@@ -49,7 +40,7 @@ set_target_properties(crypto PROPERTIES
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp)
+        ${CMAKE_SOURCE_DIR}/jni/src/native-lib.cpp)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
@@ -59,12 +50,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         curl
        )
 #set(CMAKE_CXX_FLAGS "-mllvm -fla -mllvm -sub -mllvm -bcf -mllvm -sobf")
-#add_library(bbb SHARED test2.cpp)
-#target_link_libraries(bbb
-#        # List libraries link to the target library
-#        crypto
-#        ssl
-#        curl
-#        android
-#        log)
+
 
