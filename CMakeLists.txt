@@ -11,9 +11,9 @@ if(NOT DEFINED STATIC_LIB_PATH)
     message(FATAL_ERROR "STATIC_LIB_PATH not defined!")
 endif()
 include_directories(
-        include/curl
-        include/openssl
-        include/json)
+        static-libs/include/curl
+        static-libs/include/openssl
+        static-libs/include/json)
 
 #add_library( # Sets the name of the library.
 #        lib_json
@@ -26,25 +26,25 @@ include_directories(
 
 add_library(z STATIC IMPORTED)
 set_target_properties(z PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniStaticLibs/${ANDROID_ABI}/libz.a  # ${ANDROID_ABI} 自动匹配当前 ABI（如 armeabi-v7a）:ml-citation{ref="5,6" data="citationList"}
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libz.a  # ${ANDROID_ABI} 自动匹配当前 ABI（如 armeabi-v7a）:ml-citation{ref="5,6" data="citationList"}
 )
 add_library(json STATIC IMPORTED)
 set_target_properties(json PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniStaticLibs/${ANDROID_ABI}/libjsoncpp.a  # ${ANDROID_ABI} 自动匹配当前 ABI（如 armeabi-v7a）:ml-citation{ref="5,6" data="citationList"}
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libjsoncpp.a  # ${ANDROID_ABI} 自动匹配当前 ABI（如 armeabi-v7a）:ml-citation{ref="5,6" data="citationList"}
 )
 # 引入 libssl.a
 add_library(ssl STATIC IMPORTED)
 set_target_properties(ssl PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniStaticLibs/${ANDROID_ABI}/libssl.a
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libssl.a
 )
 
 add_library(curl STATIC IMPORTED)
 set_target_properties(curl PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniStaticLibs/${ANDROID_ABI}/libcurl.a
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libcurl.a
 )
 add_library(crypto STATIC IMPORTED)
 set_target_properties(crypto PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniStaticLibs/${ANDROID_ABI}/libcrypto.a
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libcrypto.a
 )
 
 add_library(${CMAKE_PROJECT_NAME} SHARED

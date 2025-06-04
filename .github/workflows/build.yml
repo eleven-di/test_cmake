@@ -12,10 +12,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up NDK
-      uses: android-actions/setup-android-ndk@v2
+    # 关键修复：使用新版 NDK 安装 Action
+    - name: Setup Android NDK
+      uses: android-actions/setup-android@v3
       with:
-        ndk-version: '25c'
+        ndk-version: "25.2.9519653"  # 指定 NDK 版本
 
     - name: Set up build environment
       run: |
@@ -27,21 +28,20 @@ jobs:
         mkdir build
         cd build
         
-        # 设置NDK路径
-        echo "NDK_HOME=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
-        
-        # 根据ABI选择工具链
+        # 根据 ABI 选择配置
         if [ "${{ matrix.abi }}" = "arm64-v8a" ]; then
           cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=../cmake/arm64-v8a-toolchain.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=${{ matrix.abi }} \
             -DANDROID_NDK=$ANDROID_NDK_ROOT \
+            -DANDROID_PLATFORM=android-21 \
             -DSTATIC_LIB_PATH=../jni/static-libs/arm64-v8a
         else
           cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=../cmake/armeabi-v7a-toolchain.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=${{ matrix.abi }} \
             -DANDROID_NDK=$ANDROID_NDK_ROOT \
+            -DANDROID_PLATFORM=android-16 \
             -DSTATIC_LIB_PATH=../jni/static-libs/armeabi-v7a
         fi
 
