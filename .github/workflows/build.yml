@@ -7,32 +7,61 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        abi: [arm64-v8a, armeabi-v7a]
-    container:
-      image: silkeh/clang:android
+        abi: [arm64-v8a]
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set environment variables
+    - name: Install dependencies
       run: |
-        echo "ANDROID_NDK_ROOT=/usr/local/android-ndk" >> $GITHUB_ENV
-        echo "PATH=$PATH:/usr/local/android-ndk" >> $GITHUB_ENV
+        sudo apt-get update
+        sudo apt-get install -y wget unzip cmake ninja-build
         
+        # 安装最新版 CMake (可选)
+        wget -qO - https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+        sudo apt-get update
+        sudo apt-get install -y cmake
+
+    - name: Setup Android NDK
+      run: |
+        # 创建 Android SDK 目录
+        mkdir -p $HOME/android-sdk
+        
+        # 下载命令行工具
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O cmdline-tools.zip
+        unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        
+        # 设置环境变量
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        
+        # 接受许可 (不需要 JDK)
+        echo "y" | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root=$HOME/android-sdk
+        
+        # 安装指定版本的 NDK
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "ndk;25.2.9519653"
+        echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+
     - name: Configure and Build
       run: |
         mkdir build && cd build
         
+        # 根据 ABI 选择配置
         if [ "${{ matrix.abi }}" = "arm64-v8a" ]; then
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_NDK=$ANDROID_NDK_ROOT \
             -DANDROID_PLATFORM=android-21 \
             -DSTATIC_LIB_PATH=../jni/static-libs/arm64-v8a
         else
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_NDK=$ANDROID_NDK_ROOT \
             -DANDROID_PLATFORM=android-16 \
             -DSTATIC_LIB_PATH=../jni/static-libs/armeabi-v7a
         fi
