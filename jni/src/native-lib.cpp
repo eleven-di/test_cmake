@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
-#include "include/json/json.h"
-#include "include/curl/curl.h"
+#include "json/json.h"
+#include "curl/curl.h"
 #include <jni.h>
 
 size_t WriteCallback(char* ptr, size_t size, size_t nmemb, void* userdata) {
