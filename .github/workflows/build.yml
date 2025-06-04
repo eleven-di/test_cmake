@@ -80,8 +80,8 @@ jobs:
       run: |
         mkdir -p artifacts/${{ matrix.abi }}
         find build -name '*.so' -exec cp {} artifacts/${{ matrix.abi }} \;
-        cp -r jni/include artifacts/
-        cp -r jni/static-libs artifacts/
+        cp -r jni/src/include artifacts/
+        cp -r jni/src/static-libs artifacts/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
