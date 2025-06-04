@@ -14,7 +14,6 @@ include_directories(
          ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
          ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
          ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include)
-
 add_library(z STATIC IMPORTED)
 set_target_properties(z PROPERTIES
         IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/jni/static-libs/${ANDROID_ABI}/libz.a  # ${ANDROID_ABI} 自动匹配当前 ABI（如 armeabi-v7a）:ml-citation{ref="5,6" data="citationList"}
@@ -48,6 +47,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         ssl
         json
         curl
+         "-Wl,--unresolved-symbols=ignore-all"
        )
 #set(CMAKE_CXX_FLAGS "-mllvm -fla -mllvm -sub -mllvm -bcf -mllvm -sobf")
 
