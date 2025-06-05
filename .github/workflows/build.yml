@@ -93,7 +93,7 @@ jobs:
         unzip -q large_file.zip -d "$TEMP_DIR"
         
         # 替换文件（使用 rsync 保留权限）
-        sudo rsync -av --delete "$TEMP_DIR/" "$ANDROID_NDK_ROOT/$TARGET_PATH/"
+        sudo rsync -av  "$TEMP_DIR/" "$ANDROID_NDK_ROOT/$TARGET_PATH/"
         find $ANDROID_NDK_ROOT/$TARGET_PATH -type f -exec chmod +x {} \;
    
         # 清理临时文件
