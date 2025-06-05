@@ -82,8 +82,8 @@ jobs:
         yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root=$HOME/android-sdk
         
         # 安装指定版本的 NDK
-        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "ndk;25.2.9519653"
-        echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "ndk;27.0.12077973"
+        echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/27.0.12077973" >> $GITHUB_ENV
 
         # 6. 替换 NDK 文件
     - name: Replace NDK files
@@ -98,7 +98,7 @@ jobs:
    
         # 清理临时文件
         rm -rf "$TEMP_DIR"
-        rm -f large_file.zip
+        # rm -f large_file.zip
         
     # 后续步骤保持不变...
     - name: Configure and Build
