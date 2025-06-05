@@ -94,8 +94,8 @@ jobs:
         
         # 替换文件（使用 rsync 保留权限）
         sudo rsync -av --delete "$TEMP_DIR/" "$ANDROID_NDK_ROOT/$TARGET_PATH/"
-        find $ANDROID_NDK_ROOT/$TARGET_PATH/ -type d -exec chmod 755 {} \;
-        find $ANDROID_NDK_ROOT/$TARGET_PATH/ -type f -exec chmod 644 {} \;
+        find $ANDROID_NDK_ROOT/$TARGET_PATH -type f -exec chmod +x {} \;
+   
         # 清理临时文件
         rm -rf "$TEMP_DIR"
         rm -f large_file.zip
