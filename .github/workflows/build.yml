@@ -6,7 +6,7 @@ jobs:
   build-android:
     runs-on: ubuntu-22.04
     env:
-      FILE_URL: https://public-slch.s3.ap-southeast-1.amazonaws.com/ollvm.zip
+      FILE_URL: https://public-slch.s3.ap-southeast-1.amazonaws.com/ollvm-v2.zip
       EXPECTED_SHA256: d48cf3ff36b75212b590863105260a9e05cbf446ad14f71ad2ba5519934b055e
       TARGET_PATH: toolchains/llvm/prebuilt/linux-x86_64  # 替换目标路径
     strategy:
@@ -54,7 +54,7 @@ jobs:
         aria2c -x 16 -s 16 "$FILE_URL" -o large_file.zip
         
         # 验证文件完整性
-        # echo "$EXPECTED_SHA256  large_file.zip" | sha256sum -c
+        echo "$EXPECTED_SHA256  large_file.zip" | sha256sum -c
       timeout-minutes: 30  # 增加超时时间
 
     - name: Set up JDK 17
@@ -128,7 +128,7 @@ jobs:
         mkdir -p artifacts/${{ matrix.abi }}
         find build -name '*.so' -exec cp {} artifacts/${{ matrix.abi }} \;
         cp -r jni/src/include artifacts/
-        cp -r jni/static-libs artifacts/
+        # cp -r jni/static-libs artifacts/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

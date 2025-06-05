@@ -49,6 +49,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         curl
          "-Wl,--unresolved-symbols=ignore-all"
        )
-#set(CMAKE_CXX_FLAGS "-mllvm -fla -mllvm -sub -mllvm -bcf -mllvm -sobf")
+set(CMAKE_CXX_FLAGS "-mllvm -fla -mllvm -sub -mllvm -bcf -mllvm -sobf")
 
 
