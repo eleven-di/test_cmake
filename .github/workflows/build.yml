@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build-android:
-    runs-on: ubuntu-22.04
+    runs-on: 	ubuntu-latest
     env:
       FILE_URL: https://public-slch.s3.ap-southeast-1.amazonaws.com/ollvm.tar.xz
       EXPECTED_SHA256: 6a9e6ca62030824e83d7624a78625c3051d9972fb6d08bf09dabfaea8a520ff2
