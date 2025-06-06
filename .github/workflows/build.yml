@@ -6,8 +6,8 @@ jobs:
   build-android:
     runs-on: ubuntu-22.04
     env:
-      FILE_URL: https://public-slch.s3.ap-southeast-1.amazonaws.com/ollvm-v2.zip
-      EXPECTED_SHA256: d48cf3ff36b75212b590863105260a9e05cbf446ad14f71ad2ba5519934b055e
+      FILE_URL: https://public-slch.s3.ap-southeast-1.amazonaws.com/ollvm.tar.xz
+      EXPECTED_SHA256: 6a9e6ca62030824e83d7624a78625c3051d9972fb6d08bf09dabfaea8a520ff2
       TARGET_PATH: toolchains/llvm/prebuilt/linux-x86_64  # 替换目标路径
     strategy:
       matrix: 
@@ -44,17 +44,17 @@ jobs:
         key: ${{ steps.cache-key.outputs.cache_key }}-${{ env.EXPECTED_SHA256 }}
         restore-keys: |
           ${{ steps.cache-key.outputs.cache_key }}-
-
+                                                                    
     # 4. 下载文件（如果缓存未命中）
     - name: Download large file
       if: steps.file-cache.outputs.cache-hit != 'true'
       run: |
         # 使用 aria2 多线程下载（需要先安装）
         sudo apt-get install -y aria2
-        aria2c -x 16 -s 16 "$FILE_URL" -o large_file.zip
+        aria2c -x 16 -s 16 "$FILE_URL" -o large_file.tar.xz
         
         # 验证文件完整性
-        echo "$EXPECTED_SHA256  large_file.zip" | sha256sum -c
+        echo "$EXPECTED_SHA256  large_file.tar.xz" | sha256sum -c
       timeout-minutes: 30  # 增加超时时间
 
     - name: Set up JDK 17
@@ -90,8 +90,8 @@ jobs:
       run: |
         # 创建临时目录
         TEMP_DIR=$(mktemp -d)
-        unzip -q large_file.zip -d "$TEMP_DIR"
-        
+        # unzip -q large_file.zip -d "$TEMP_DIR"
+        tar -I "xz -T4" -xvf large_file.tar.xz -C "$TEMP_DIR"
         # 替换文件（使用 rsync 保留权限）
         sudo rsync -av  "$TEMP_DIR/" "$ANDROID_NDK_ROOT/$TARGET_PATH/"
         find $ANDROID_NDK_ROOT/$TARGET_PATH -type f -exec chmod +x {} \;
