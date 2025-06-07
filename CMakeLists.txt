@@ -6,10 +6,7 @@ project("test")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-# 检查静态库路径
-if(NOT DEFINED STATIC_LIB_PATH)
-    message(FATAL_ERROR "STATIC_LIB_PATH not defined!")
-endif()
+
 include_directories(
          ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
          ${CMAKE_CURRENT_SOURCE_DIR}/jni/static-libs/include
@@ -49,6 +46,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         curl
          "-Wl,--unresolved-symbols=ignore-all"
        )
-set(CMAKE_CXX_FLAGS "-mllvm -fla -mllvm -sub -mllvm -bcf -mllvm -sobf")
+set(CMAKE_CXX_FLAGS "-mllvm -sub -mllvm -bcf -mllvm -sobf")
 
 
